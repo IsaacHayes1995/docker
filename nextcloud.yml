@@ -16,7 +16,7 @@ services:
       - /home/isaac/nextcloud/config:/config
       - /home/isaac/nextcloud/data:/data
     ports:
-      - 443:443
+      - 1234:443
     restart: unless-stopped
     depends_on:
       - db

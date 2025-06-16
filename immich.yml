@@ -11,8 +11,6 @@ services:
       # Change media storage location via UPLOAD_LOCATION in .env
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
-    env_file:
-      - .env
     ports:
       - "2283:2283"
     depends_on:
@@ -31,8 +29,6 @@ services:
     #   service: cpu            # [armnn|cuda|rocm|openvino|openvino-wsl|rknn]
     volumes:
       - model-cache:/cache
-    env_file:
-      - .env
     restart: always
     healthcheck:
       disable: false

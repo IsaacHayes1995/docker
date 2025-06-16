@@ -3,16 +3,12 @@ name: immich
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    # extends:
-    #   file: hwaccel.transcoding.yml
-    #   service: cpu            # [nvenc|quicksync|rkmpp|vaapi|vaapi-wsl]
+    image: ghcr.io/immich-app/immich-server:release
     volumes:
-      # Change media storage location via UPLOAD_LOCATION in .env
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /home/isaac/data/files/photos:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
-    env_file:
-      - stack.env
+    environment:
+      TZ: Australia/Melbourne
     ports:
       - "2283:2283"
     depends_on:
@@ -24,15 +20,11 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    # Add -[armnn|cuda|rocm|openvino|rknn] to enable HW accel
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
-    # extends:
-    #   file: hwaccel.ml.yml
-    #   service: cpu            # [armnn|cuda|rocm|openvino|openvino-wsl|rknn]
+    image: ghcr.io/immich-app/immich-machine-learning:release
     volumes:
       - model-cache:/cache
-    env_file:
-      - stack.env
+    environment:
+      TZ: Australia/Melbourne
     restart: always
     healthcheck:
       disable: false
@@ -48,13 +40,14 @@ services:
     container_name: immich_postgres
     image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0@sha256:fa4f6e0971f454cd95fec5a9aaed2ed93d8f46725cc6bc61e0698e97dba96da1
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER:    postgres
+      POSTGRES_DB:      immich
       POSTGRES_INITDB_ARGS: "--data-checksums"
-      DB_STORAGE_TYPE: "HDD"   # uncomment if not on SSD
+      DB_STORAGE_TYPE: "HDD"   # delete this line if you’re on SSD
+      TZ: Australia/Melbourne
     volumes:
-      - immich-db-data:/var/lib/postgresql/data  
+      - immich-db-data:/var/lib/postgresql/data
     restart: always
 
 volumes:
